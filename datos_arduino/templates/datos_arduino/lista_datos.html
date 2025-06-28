@@ -47,13 +47,21 @@
             .container { padding: 0 2px !important; }
             h1 { font-size: 1.3rem; }
         }
+        .btn-export-csv {
+            float: right;
+            margin-bottom: 10px;
+        }
+        .tooltip-inner {
+            max-width: 300px;
+            font-size: 0.93em;
+        }
     </style>
 </head>
 <body>
 <!-- Navbar superior -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top py-2">
   <div class="container-fluid">
-    <a class="navbar-brand" ><i class="bi bi-brightness-high"></i> Modelos Matematicos</a>
+    <a class="navbar-brand"><i class="bi bi-brightness-high"></i> Modelos Matematicos</a>
     <span class="navbar-text text-white d-none d-md-inline">
       <i class="bi bi-cpu"></i> Django + Arduino
     </span>
@@ -63,18 +71,18 @@
 <div class="container mt-4">
     <h1 class="my-3 text-center">Panel Solar Dashboard</h1>
     {% if ultimo %}
-        <div class="card card-animate mb-4 text-center shadow-sm" style="background:#fff2f8;">
-            <div class="card-body">
+      <div class="card card-animate mb-4 text-center shadow-sm {% if ultimo.solar_value < 15 %}bg-danger-subtle{% else %}bg-success-subtle{% endif %}">
+          <div class="card-body">
             {% if ultimo.solar_value < 15 %}
-                <i class="bi bi-exclamation-triangle text-danger" style="font-size:2rem;"></i>
-                <span class="text-danger fw-bold ms-2">¡Cuidado! Producción baja de energía solar.</span>
+              <i class="bi bi-exclamation-triangle text-danger" style="font-size:2rem;"></i>
+              <span class="text-danger fw-bold ms-2">¡Cuidado! Producción baja de energía solar.</span>
             {% else %}
-                <i class="bi bi-check-circle text-success" style="font-size:2rem;"></i>
-                <span class="text-success fw-bold ms-2">Panel solar funcionando correctamente.</span>
+              <i class="bi bi-check-circle text-success" style="font-size:2rem;"></i>
+              <span class="text-success fw-bold ms-2">Panel solar funcionando correctamente.</span>
             {% endif %}
             <span class="ms-3 text-muted">(Último valor: {{ ultimo.solar_value }})</span>
-            </div>
-        </div>
+          </div>
+      </div>
     {% endif %}
 
     <!-- Indicadores rápidos -->
@@ -82,7 +90,10 @@
       <div class="col-12 col-md-4 mb-3">
         <div class="card card-animate text-center shadow-sm">
           <div class="card-body">
-            <div class="stat-title text-success"><i class="bi bi-arrow-up"></i> Valor Máximo Solar</div>
+            <div class="stat-title text-success">
+              <i class="bi bi-arrow-up"></i> Valor Máximo Solar
+              <i class="bi bi-question-circle ms-1" data-bs-toggle="tooltip" title="Valor más alto de energía solar registrado en las últimas mediciones."></i>
+            </div>
             <div class="stat-value text-success">{{ datos|max_val:"solar_value" }}</div>
           </div>
         </div>
@@ -90,7 +101,10 @@
       <div class="col-12 col-md-4 mb-3">
         <div class="card card-animate text-center shadow-sm">
           <div class="card-body">
-            <div class="stat-title text-danger"><i class="bi bi-arrow-down"></i> Valor Mínimo Solar</div>
+            <div class="stat-title text-danger">
+              <i class="bi bi-arrow-down"></i> Valor Mínimo Solar
+              <i class="bi bi-question-circle ms-1" data-bs-toggle="tooltip" title="Valor más bajo de energía solar registrado en las últimas mediciones."></i>
+            </div>
             <div class="stat-value text-danger">{{ datos|min_val:"solar_value" }}</div>
           </div>
         </div>
@@ -98,7 +112,10 @@
       <div class="col-12 col-md-4 mb-3">
         <div class="card card-animate text-center shadow-sm">
           <div class="card-body">
-            <div class="stat-title text-primary"><i class="bi bi-bar-chart-line"></i> Promedio Solar</div>
+            <div class="stat-title text-primary">
+              <i class="bi bi-bar-chart-line"></i> Promedio Solar
+              <i class="bi bi-question-circle ms-1" data-bs-toggle="tooltip" title="Promedio de energía solar (suma total dividida para el número de lecturas)."></i>
+            </div>
             <div class="stat-value text-primary">{{ datos|average_val:"solar_value" }}</div>
           </div>
         </div>
@@ -108,7 +125,10 @@
     <!-- Mini-gráficas LDR -->
     <div class="card card-animate mb-4 shadow-sm">
       <div class="card-body">
-        <h5 class="card-title mb-3">Tendencia de sensores LDR</h5>
+        <h5 class="card-title mb-3">
+            Tendencia de sensores LDR
+            <i class="bi bi-question-circle ms-1" data-bs-toggle="tooltip" title="Muestra la tendencia rápida de cada sensor LDR en las últimas lecturas."></i>
+        </h5>
         <div class="row text-center">
           <div class="col-6 col-md-3 mb-3">
             <canvas id="ldr_lt_chart" height="35"></canvas>
@@ -133,10 +153,18 @@
     <!-- Gráfica principal -->
     <div class="card card-animate mb-4 shadow-sm">
       <div class="card-body">
-        <h5 class="card-title">Gráfica de Solar Value</h5>
+        <h5 class="card-title">
+            Gráfica de Solar Value
+            <i class="bi bi-question-circle ms-1" data-bs-toggle="tooltip" title="Gráfica general del valor solar medido por el panel en el tiempo."></i>
+        </h5>
         <canvas id="solarChart" height="80"></canvas>
       </div>
     </div>
+
+    <!-- Botón Exportar CSV -->
+    <button class="btn btn-outline-primary btn-export-csv" onclick="exportTableToCSV('panel_solar_datos.csv')">
+      <i class="bi bi-file-earmark-arrow-down"></i> Exportar a CSV
+    </button>
 
     <!-- Tabla de datos -->
     <div class="card card-animate mb-5 shadow-sm">
@@ -174,7 +202,7 @@
 
 <footer class="footer text-center py-3">
     <small>
-        Hecho con <span style="color:#e83e8c;">&#10084;</span> por <strong>Grupo numero 7: El Panel Solar</strong> — Proyecto Solar Tracker Django &amp; Arduino
+        Hecho con <span style="color:#e83e8c;">&#10084;</span> por <strong>Grupo número 7: El Panel Solar</strong> — Proyecto Solar Tracker Django &amp; Arduino
     </small>
 </footer>
 
@@ -183,10 +211,10 @@
 <!-- Chart.js y gráficas -->
 <script>
     // === Mini-gráficas LDR (sparklines) ===
-    const ldr_lt = [{% for d in datos reversed %}{{ d.ldr_left_top }},{% endfor %}];
-    const ldr_rt = [{% for d in datos reversed %}{{ d.ldr_right_top }},{% endfor %}];
-    const ldr_lb = [{% for d in datos reversed %}{{ d.ldr_left_bottom }},{% endfor %}];
-    const ldr_rb = [{% for d in datos reversed %}{{ d.ldr_right_bottom }},{% endfor %}];
+    const ldr_lt = [{% for d in datos reversed %}{{ d.ldr_left_top }}{% if not forloop.last %},{% endif %}{% endfor %}];
+    const ldr_rt = [{% for d in datos reversed %}{{ d.ldr_right_top }}{% if not forloop.last %},{% endif %}{% endfor %}];
+    const ldr_lb = [{% for d in datos reversed %}{{ d.ldr_left_bottom }}{% if not forloop.last %},{% endif %}{% endfor %}];
+    const ldr_rb = [{% for d in datos reversed %}{{ d.ldr_right_bottom }}{% if not forloop.last %},{% endif %}{% endfor %}];
     const sparkOpt = {
       type: 'line',
       options: { plugins: { legend: { display: false } }, scales: { x: {display: false}, y: {display: false} }, elements: {point:{radius:0}}, responsive: true },
@@ -235,6 +263,29 @@
 
     // === Auto-Refresh cada 5s ===
     setInterval(() => location.reload(), 5000);
+
+    // === Exportar tabla a CSV ===
+    function exportTableToCSV(filename) {
+        var csv = [];
+        var rows = document.querySelectorAll("table tr");
+        for (var i = 0; i < rows.length; i++) {
+            var row = [], cols = rows[i].querySelectorAll("th, td");
+            for (var j = 0; j < cols.length; j++)
+                row.push(cols[j].innerText.replace(/,/g, "")); // Sin comas internas
+            csv.push(row.join(","));
+        }
+        // Descargar archivo
+        var csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+        var downloadLink = document.createElement("a");
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
+    // === Activar tooltips de Bootstrap 5 ===
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 </script>
 </body>
 </html>
