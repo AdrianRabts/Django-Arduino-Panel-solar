@@ -62,6 +62,20 @@
 
 <div class="container mt-4">
     <h1 class="my-3 text-center">Panel Solar Dashboard</h1>
+    {% if ultimo %}
+        <div class="card card-animate mb-4 text-center shadow-sm" style="background:#fff2f8;">
+            <div class="card-body">
+            {% if ultimo.solar_value < 15 %}
+                <i class="bi bi-exclamation-triangle text-danger" style="font-size:2rem;"></i>
+                <span class="text-danger fw-bold ms-2">¡Cuidado! Producción baja de energía solar.</span>
+            {% else %}
+                <i class="bi bi-check-circle text-success" style="font-size:2rem;"></i>
+                <span class="text-success fw-bold ms-2">Panel solar funcionando correctamente.</span>
+            {% endif %}
+            <span class="ms-3 text-muted">(Último valor: {{ ultimo.solar_value }})</span>
+            </div>
+        </div>
+    {% endif %}
 
     <!-- Indicadores rápidos -->
     <div class="row mb-4">
