@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; }
+        h1 { color: #880044; margin-top: 30px;}
+        table { border-collapse: collapse; margin: 30px 0; font-size: 16px; width: 900px; }
+        th, td { border: 1px solid #555; padding: 6px 10px; text-align: center;}
+        th { background: #eee; }
+        tr:nth-child(even) { background: #f9f9f9; }
+    </style>
+    
+    <title>Datos del Panel Solar</title>
+</head>
+<script>
+    setInterval(() => location.reload(), 2000); // recarga cada 3 segundos
+  </script>
+<body>
+    <h1>Lecturas de los LDR y Panel Solar</h1>
+    <table border="1">
+        <tr>
+            <th>Fecha/Hora</th>
+            <th>LDR Left Top</th>
+            <th>LDR Right Top</th>
+            <th>LDR Left Bottom</th>
+            <th>LDR Right Bottom</th>
+            <th>Solar Value</th>
+        </tr>
+        {% for d in datos %}
+        <tr>
+            <td>{{ d.timestamp }}</td>
+            <td>{{ d.ldr_left_top }}</td>
+            <td>{{ d.ldr_right_top }}</td>
+            <td>{{ d.ldr_left_bottom }}</td>
+            <td>{{ d.ldr_right_bottom }}</td>
+            <td>{{ d.solar_value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
