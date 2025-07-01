@@ -1,3 +1,50 @@
+Django-Arduino-Panel-solar
+Panel de control web para monitorear y analizar datos de sensores conectados a un panel solar, usando Django como backend y Arduino como fuente de datos.
+
+Descripción
+Este proyecto permite visualizar y analizar los datos recolectados por sensores LDR (fotoresistencias) y de salida solar conectados a un Arduino, que luego son almacenados y gestionados desde un backend en Django. Incluye un dashboard web moderno (HTML + Bootstrap + Chart.js) para seguimiento en tiempo real y visualización histórica.
+
+Características
+Visualización de los últimos datos registrados por sensores en un panel solar.
+Dashboard responsive con métricas, tablas y gráficos.
+Backend en Django, con modelos listos para almacenar y consultar datos.
+Uso de filtros personalizados en plantillas para cálculos estadísticos rápidos (máximo, mínimo, promedio).
+Preparado para recibir y mostrar datos de Arduino.
+
+Estructura del Proyecto
+Django-Arduino-Panel-solar/
+├── datos_arduino/
+│   ├── migrations/
+│   ├── templates/datos_arduino/lista_datos.html
+│   ├── templatetags/stats_filters.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+├── panel_solar/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── asgi.py
+├── manage.py
+
+Modelo de Datos
+El modelo principal es SensorData, que almacena:
+
+timestamp: Fecha y hora de la medición.
+ldr_left_top, ldr_right_top, ldr_left_bottom, ldr_right_bottom: Lecturas de sensores LDR.
+solar_value: Valor de salida solar.
+
+Interfaz Web
+La plantilla principal (lista_datos.html) ofrece:
+
+Dashboard moderno y responsivo.
+Visualización de métricas y tabla de últimas lecturas.
+Gráficos preparados para integrar datos históricos.
+
+Comunicación con Arduino
+Deberás implementar una rutina (por ejemplo, usando pySerial) para recibir datos del Arduino y guardarlos en la base de datos. El backend y frontend ya están listos para mostrar los datos almacenados.
+--------------------------------------------------------------------------------------------------------
+
 #include <Servo.h>  
 
 Servo horizontal; // Servo horizontal
